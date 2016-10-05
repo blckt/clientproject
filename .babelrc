@@ -16,7 +16,9 @@
               "imports": [ "react", "redbox-react" ]
             }
           ]
-        }]
+        },
+        "transform-decorators-legacy"
+        ]
       ]
     },
     "i18n": {

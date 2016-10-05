@@ -1,11 +1,14 @@
 {
     "compilerOptions": {
-        "target": "ES6"
+        "target": "ES6",
+        "module": "es6",
+        "experimentalDecorators": true
     },
     "exclude": [
         "node_modules"
     ],
     "files":[
-        "lib/index.js"
+        "lib/index.js",
+        "typings/index.d.ts"
     ]
 }

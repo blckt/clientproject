@@ -13,3 +13,16 @@
 td.rights {
   text-align: center;
 }
+@media (max-width:1000px){
+  .menu-bordered{
+        border-bottom: 1px solid lightslategrey;
+        a{
+          text-align: center;
+        }
+  }
+}
+@media (min-width:1000px){
+  .menu-bordered{
+        border-right: 1px solid lightslategrey;
+  }
+}
