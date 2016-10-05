@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "allowJs": true
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot",
+    "out"
+  ],
+  "files": [ "./lib/index.js", './typings/index.d.ts' ],
+  "compileOnSave": true,
+  "typingOptions": {
+    "enableAutoDiscovery": true
+  }
+}
