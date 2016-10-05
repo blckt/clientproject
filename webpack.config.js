@@ -1,6 +1,6 @@
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   devtool: 'eval',
@@ -20,7 +20,7 @@ module.exports = {
     }
   },
   externals: {
-    "jQuery": "jQuery"
+    'jQuery': 'jQuery'
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -39,9 +39,9 @@ module.exports = {
       favicon: path.join(__dirname, 'assets', 'images', 'favicon.ico')
     }),
     new webpack.ProvidePlugin({
-      $: "jquery",
-      jQuery: "jquery",
-      "window.jQuery": "jquery",
+      $: 'jquery',
+      jQuery: 'jquery',
+      'window.jQuery': 'jquery',
     })
   ],
   module: {
@@ -50,20 +50,17 @@ module.exports = {
       {
         test: /\.jsx?$/,
         loader: 'babel',
-        include: path.join(__dirname, 'lib'),
-        query: {
-          presets: ['react']
-        }
+        include: path.join(__dirname, 'lib')
       },
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: "url-loader?limit=10000&mimetype=application/font-woff"
+        loader: 'url-loader?limit=10000&mimetype=application/font-woff'
       },
-      { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" },
+      { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader' },
       { test: /\.(gif|jpeg)$/, loader: 'file-loader' },
       {
         test: /\.scss$/,
-        loaders: ["style", "css", "sass"]
+        loaders: ['style', 'css', 'sass']
       }
     ]
   },

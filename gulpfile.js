@@ -7,22 +7,22 @@
 
 // Include Gulp and other build automation tools and utilities
 // See: https://github.com/gulpjs/gulp/blob/master/docs/API.md
-var gulp = require('gulp');
-var $ = require('gulp-load-plugins')();
-var del = require('del');
-var path = require('path');
-var merge = require('merge-stream');
-var runSequence = require('run-sequence');
-var webpack = require('webpack');
-var browserSync = require('browser-sync');
-var pagespeed = require('psi');
-var argv = require('minimist')(process.argv.slice(2));
+const gulp = require('gulp');
+const $ = require('gulp-load-plugins')();
+const del = require('del');
+const path = require('path');
+const merge = require('merge-stream');
+const runSequence = require('run-sequence');
+const webpack = require('webpack');
+const browserSync = require('browser-sync');
+const pagespeed = require('psi');
+const argv = require('minimist')(process.argv.slice(2));
 
 // Settings
-var DEST = './build';                         // The build output folder
-var RELEASE = !!argv.release;                 // Minimize and optimize during a build?
-var GOOGLE_ANALYTICS_ID = 'UA-XXXXX-X';       // https://www.google.com/analytics/web/
-var AUTOPREFIXER_BROWSERS = [                 // https://github.com/ai/autoprefixer
+const DEST = './build';                         // The build output folder
+const RELEASE = !!argv.release;                 // Minimize and optimize during a build?
+const GOOGLE_ANALYTICS_ID = 'UA-XXXXX-X';       // https://www.google.com/analytics/web/
+const AUTOPREFIXER_BROWSERS = [                 // https://github.com/ai/autoprefixer
   'ie >= 10',
   'ie_mob >= 10',
   'ff >= 30',
@@ -34,12 +34,12 @@ var AUTOPREFIXER_BROWSERS = [                 // https://github.com/ai/autoprefi
   'bb >= 10'
 ];
 
-var src = {};
-var watch = false;
-var pkgs = (function () {
-  var temp = {};
-  var map = function (source) {
-    for (var key in source) {
+const src = {};
+const watch = false;
+const pkgs = (function () {
+  const temp = {};
+  const map = function (source) {
+    for (const key in source) {
       temp[key.replace(/[^a-z0-9]/gi, '')] = source[key].substring(1);
     }
   };
@@ -69,7 +69,7 @@ gulp.task('assets', function () {
   return gulp.src(src.assets)
     .pipe($.changed(DEST))
     .pipe(gulp.dest(DEST))
-    .pipe($.size({title: 'assets'}));
+    .pipe($.size({ title: 'assets' }));
 });
 
 // Images
@@ -82,7 +82,7 @@ gulp.task('images', function () {
       interlaced: true
     })))
     .pipe(gulp.dest(DEST + '/images'))
-    .pipe($.size({title: 'images'}));
+    .pipe($.size({ title: 'images' }));
 });
 
 // HTML pages
@@ -96,7 +96,7 @@ gulp.task('pages', function () {
       minifyJS: true
     })))
     .pipe(gulp.dest(DEST))
-    .pipe($.size({title: 'pages'}));
+    .pipe($.size({ title: 'pages' }));
 });
 
 // CSS style sheets
@@ -109,25 +109,25 @@ gulp.task('styles', function () {
       sourceMapBasepath: __dirname
     }))
     .on('error', console.error.bind(console))
-    .pipe($.autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
+    .pipe($.autoprefixer({ browsers: AUTOPREFIXER_BROWSERS }))
     .pipe($.csscomb())
     .pipe($.if(RELEASE, $.minifyCss()))
     .pipe(gulp.dest(DEST + '/css'))
-    .pipe($.size({title: 'styles'}));
+    .pipe($.size({ title: 'styles' }));
 });
 
 // Bundle
 gulp.task('bundle', function (cb) {
-  var started = false;
-  var config = require('./config/webpack.js')(RELEASE);
-  var bundler = webpack(config);
+  const started = false;
+  const config = require('./config/webpack.js')(RELEASE);
+  const bundler = webpack(config);
 
   function bundle(err, stats) {
     if (err) {
       throw new $.util.PluginError('webpack', err);
     }
 
-    !!argv.verbose && $.util.log('[webpack]', stats.toString({colors: true}));
+    !!argv.verbose && $.util.log('[webpack]', stats.toString({ colors: true }));
 
     if (!started) {
       started = true;
@@ -180,11 +180,11 @@ gulp.task('deploy', function () {
 
   // Remove temp folder
   if (argv.clean) {
-    var os = require('os');
-    var path = require('path');
-    var repoPath = path.join(os.tmpdir(), 'tmpRepo');
+    const os = require('os');
+    const path = require('path');
+    const repoPath = path.join(os.tmpdir(), 'tmpRepo');
     $.util.log('Delete ' + $.util.colors.magenta(repoPath));
-    del.sync(repoPath, {force: true});
+    del.sync(repoPath, { force: true });
   }
 
   return gulp.src(DEST + '/**/*')
