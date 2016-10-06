@@ -3,8 +3,8 @@ import {
   Table, Column, Cell
 }
 from 'fixed-data-table';
-import { Grid,Row,FormGroup,ControlLabel,FormControl, HelpBlock } from 'react-bootstrap';
-import {withRouter} from 'react-router'
+import { Grid,Row,FormGroup,ControlLabel,FormControl } from 'react-bootstrap';
+
 const CLOSEST_SELECTOR= '.fixedDataTableCellGroupLayout_cellGroup';
 const HOVER_CLASSNAME='row-hovered';
 
@@ -12,7 +12,7 @@ class TableView extends React.Component {
   constructor(props) {
     super(props);
     this.data=props.data;
-    console.log(props);
+
     this.state={
       filteredList:this.data,
       searchValue:''
@@ -21,10 +21,13 @@ class TableView extends React.Component {
   }
 
   static propTypes = {
-    data:PropTypes.arrayOf(PropTypes.any)
+    data:PropTypes.arrayOf(PropTypes.any),
+    onClick:PropTypes.func.isRequired
   };
-  componentWillMount(){
-    console.log(this.props)
+  componentWillReceiveProps(props) {
+    this.setState({
+      filteredList:props.data
+    });
   }
 
   _onFilterChange(e) {
@@ -45,10 +48,9 @@ class TableView extends React.Component {
     });
   }
    getValidationState() {
-     const length = this.state.searchValue.length;
+     const length = this.state.filteredList?this.state.filteredList.length:0;
      if (length > 10) return 'success';
-    else if (length > 5) return 'warning';
-    else if (length > 0) return 'error';
+     if (length === 0) return 'error';
    }
    tableOnRowMouseEnter(e) {
      const node = e.target.closest(CLOSEST_SELECTOR);
@@ -58,17 +60,37 @@ class TableView extends React.Component {
       const node = e.target.closest(CLOSEST_SELECTOR);
       node.classList.remove(HOVER_CLASSNAME);
     }
-  tableOnClick(e){
-    this.props.router.push('/dashboard/group/'+e.target.closest(CLOSEST_SELECTOR).firstChild.textContent)
+  tableOnClick(e) {
+    this.props.onClick(e.target.closest(CLOSEST_SELECTOR).firstChild.textContent);
   }
   render() {
     const  { filteredList:data }  = this.state;
     const columnsCount=!!data?Object.keys(data[0]).length:1;
     const MAX_WIDTH=750;
-    const columnWidth=MAX_WIDTH/columnsCount;
+    const MAGIC_NUMBER=2;
+    const columnWidth=MAX_WIDTH/columnsCount-MAGIC_NUMBER;
+    let columns =data?Object.keys(data[0]).map((key,index)=>{
+      if (key==='id') {
+        return (<Column
+              key={index}
+              header={<Cell style={{ display:'none' }} >{key}</Cell>}
+              flexGrow={1}
+              style={{ display:'none' }}
+              width={0}
+              cell={cellProps=>(<Cell style={{ display:'none' }} {...cellProps}>{data[cellProps.rowIndex][key]}</Cell>)}
+            />);
+      }
+      return (<Column
+              key={index}
+              header={key}
+              flexGrow={1}
+              width={Math.round(columnWidth)}
+              cell={cellProps=>(<Cell {...cellProps}>{data[cellProps.rowIndex][key]}</Cell>)}
+            />);
+    }):null;
     return (<Grid>
     <Row>
-    <FormGroup controlId={"search"} validationState={this.getValidationState()}>
+    <FormGroup controlId={"search"} style={{ width:MAX_WIDTH }} validationState={this.getValidationState()}>
       <ControlLabel>Search field...</ControlLabel>
       <FormControl type="text" value={this.state.searchValue} placeholder="Search..." onChange={this._onFilterChange}/>
     </FormGroup>
@@ -84,18 +106,12 @@ class TableView extends React.Component {
           onRowMouseLeave={this.tableOnRowMouseLeave.bind(this)}
           onRowClick={this.tableOnClick.bind(this)}
           rowsCount={data.length}>
-          {Object.keys(data[0]).map((key,index)=>{
-            return (<Column
-              key={index}
-              header={key}
-              flexGrow={1}
-              width={Math.round(columnWidth)}
-              cell={cellProps=>(<Cell {...cellProps}>{data[cellProps.rowIndex][key]}</Cell>)}
-            />);
-          })}
+          {
+            columns
+          }
         </Table>
       }</Row>
     </Grid>);
   }
 }
-export default withRouter(TableView);
+export default TableView;
