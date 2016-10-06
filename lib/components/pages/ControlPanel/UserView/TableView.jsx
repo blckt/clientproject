@@ -4,7 +4,7 @@ import {
 }
 from 'fixed-data-table';
 import { Grid,Row,FormGroup,ControlLabel,FormControl, HelpBlock } from 'react-bootstrap';
-
+import {withRouter} from 'react-router'
 const CLOSEST_SELECTOR= '.fixedDataTableCellGroupLayout_cellGroup';
 const HOVER_CLASSNAME='row-hovered';
 
@@ -12,6 +12,7 @@ class TableView extends React.Component {
   constructor(props) {
     super(props);
     this.data=props.data;
+    console.log(props);
     this.state={
       filteredList:this.data,
       searchValue:''
@@ -20,7 +21,10 @@ class TableView extends React.Component {
   }
 
   static propTypes = {
-    data:PropTypes.arrayOf(PropTypes.any).isRequired
+    data:PropTypes.arrayOf(PropTypes.any)
+  };
+  componentWillMount(){
+    console.log(this.props)
   }
 
   _onFilterChange(e) {
@@ -54,9 +58,11 @@ class TableView extends React.Component {
       const node = e.target.closest(CLOSEST_SELECTOR);
       node.classList.remove(HOVER_CLASSNAME);
     }
+  tableOnClick(e){
+    this.props.router.push('/dashboard/group/'+e.target.closest(CLOSEST_SELECTOR).firstChild.textContent)
+  }
   render() {
     const  { filteredList:data }  = this.state;
-    debugger;
     const columnsCount=!!data?Object.keys(data[0]).length:1;
     const MAX_WIDTH=750;
     const columnWidth=MAX_WIDTH/columnsCount;
@@ -68,25 +74,28 @@ class TableView extends React.Component {
     </FormGroup>
     </Row>
     <Row>
-    !!data && <Table
-    height={350}
-        width={MAX_WIDTH}
-        rowHeight={50}
-        headerHeight={50}
-        onRowMouseEnter={this.tableOnRowMouseEnter.bind(this)}
-        onRowMouseLeave={this.tableOnRowMouseLeave.bind(this)}
-        rowsCount={data.length}>
-        {Object.keys(data[0]).map((key,index)=>{
-          return (<Column
+      {
+        !!data && <Table
+          height={350}
+          width={MAX_WIDTH}
+          rowHeight={50}
+          headerHeight={50}
+          onRowMouseEnter={this.tableOnRowMouseEnter.bind(this)}
+          onRowMouseLeave={this.tableOnRowMouseLeave.bind(this)}
+          onRowClick={this.tableOnClick.bind(this)}
+          rowsCount={data.length}>
+          {Object.keys(data[0]).map((key,index)=>{
+            return (<Column
               key={index}
               header={key}
               flexGrow={1}
               width={Math.round(columnWidth)}
               cell={cellProps=>(<Cell {...cellProps}>{data[cellProps.rowIndex][key]}</Cell>)}
-          />);
-        })}
-    </Table></Row>
+            />);
+          })}
+        </Table>
+      }</Row>
     </Grid>);
   }
 }
-export default TableView;
+export default withRouter(TableView);
