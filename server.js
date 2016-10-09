@@ -36,5 +36,5 @@ app.listen(port, 'localhost', function (err) {
     return;
   }
 
-  console.log('Listening at http://localhost:3001');
+  console.log('Listening at'+port);
 });
