@@ -5,7 +5,7 @@ const config = require('./webpack.config');
 
 const app = express();
 const compiler = webpack(config);
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || process.env.port || 3001;
 app.use(/\.js$|\.css$/,express.static('dist'));
 if(process.env.NODE_ENV!=='production'){
   app.use(require('webpack-dev-middleware')(compiler, {
@@ -38,5 +38,5 @@ app.listen(port, 'localhost', function (err) {
     return;
   }
 
-  console.log('Listening at'+port);
+  console.log('Listening at port : '+port);
 });
